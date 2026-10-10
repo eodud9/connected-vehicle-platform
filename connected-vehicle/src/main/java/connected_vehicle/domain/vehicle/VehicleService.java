@@ -129,9 +129,13 @@ public class VehicleService {
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException("해당 차량을 찾을 수 없습니다."));
 
+        String requestApiKeyHash = hashApiKey(apiKey);
+
+        System.out.println(requestApiKeyHash);
+
         boolean matches = MessageDigest.isEqual(
-                apiKey.getBytes(),
-                vehicle.getApiKeyHash().getBytes()
+                requestApiKeyHash.getBytes(StandardCharsets.UTF_8),
+                vehicle.getApiKeyHash().getBytes(StandardCharsets.UTF_8)
         );
 
         if(!matches){

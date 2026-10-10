@@ -29,6 +29,7 @@ public class SecurityConfig {
                                         .requestMatchers(HttpMethod.POST,"/api/users").permitAll()
                                         .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/ownerships").hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.POST, "/api/vehicles/*/telemetry").permitAll()
                                         .anyRequest().authenticated()
                 )
                 .build();

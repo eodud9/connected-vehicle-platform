@@ -48,11 +48,11 @@ public class Telemetry {
 
     protected Telemetry(){}
 
-    public Telemetry(Vehicle vehicle, double speed, double longitude, double latitude, double batteryLevel, double temperature, boolean ignitionStatus, LocalDateTime recordedAt){
+    public Telemetry(Vehicle vehicle,double latitude, double longitude, double speed, double batteryLevel, double temperature, boolean ignitionStatus, LocalDateTime recordedAt){
         this.vehicle = vehicle;
-        this.speed = speed;
-        this.longitude = longitude;
         this.latitude = latitude;
+        this.longitude = longitude;
+        this.speed = speed;
         this.batteryLevel = batteryLevel;
         this.temperature = temperature;
         this.ignitionStatus = ignitionStatus;
