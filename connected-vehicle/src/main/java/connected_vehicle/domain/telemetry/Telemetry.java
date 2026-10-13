@@ -59,4 +59,8 @@ public class Telemetry {
         this.recordedAt = recordedAt;
         this.createdAt = LocalDateTime.now();
     }
+
+    public void assignDrivingSession(DrivingSession drivingSession){
+        this.drivingSession = drivingSession;
+    }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "driving-sessions")
+@Table(name = "driving_sessions")
 public class DrivingSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +40,11 @@ public class DrivingSession {
         this.startBatteryLevel = startBatteryLevel;
     }
 
-    public void end(LocalDateTime endedAt, Double totalDistance, Double averageSpeed, Double endBatteryLevel){
+    public void end(LocalDateTime endedAt, Double endBatteryLevel, Double totalDistance, Double averageSpeed){
         this.endedAt = endedAt;
+        this.endBatteryLevel = endBatteryLevel;
         this.totalDistance = totalDistance;
         this.averageSpeed = averageSpeed;
-        this.endBatteryLevel = endBatteryLevel;
 
     }
 }
