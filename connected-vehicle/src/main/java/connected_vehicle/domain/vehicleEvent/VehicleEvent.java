@@ -35,11 +35,17 @@ public class VehicleEvent {
 
     protected VehicleEvent(){}
 
-    public VehicleEvent(Vehicle vehicle, DrivingSession drivingSession, EventType eventType, String description, LocalDateTime occurredAt){
+    public VehicleEvent(Vehicle vehicle,
+                        DrivingSession drivingSession,
+                        EventType eventType,
+                        String description,
+                        LocalDateTime occurredAt){
+
         this.vehicle = vehicle;
         this.drivingSession = drivingSession;
         this.eventType = eventType;
         this.description = description;
         this.occurredAt = occurredAt;
+
     }
 }

@@ -5,6 +5,7 @@ import connected_vehicle.domain.drivingSession.DrivingSessionRepository;
 import connected_vehicle.domain.telemetry.dto.TelemetryCreateRequest;
 import connected_vehicle.domain.vehicle.Vehicle;
 import connected_vehicle.domain.vehicle.VehicleService;
+import connected_vehicle.domain.vehicleEvent.VehicleEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ public class TelemetryService {
     private final TelemetryRepository telemetryRepository;
     private final VehicleService vehicleService;
     private final DrivingSessionRepository drivingSessionRepository;
+    private final VehicleEventService vehicleEventService;
 
     @Transactional
     public void createTelemetry(Long vehicleId, String apiKey, TelemetryCreateRequest request){
@@ -81,6 +83,8 @@ public class TelemetryService {
 
         telemetryRepository.save(telemetry);
 
+        vehicleEventService.detectEvents(prevTelemetry, telemetry);
+
         if(sessionToEnd != null){
 
             List<Telemetry> telemetries = telemetryRepository.findAllByDrivingSession_IdOrderByRecordedAtAsc(sessionToEnd.getId());
@@ -136,8 +140,6 @@ public class TelemetryService {
 
         double earthRadius = 6371.0; // km
 
-        double distance = earthRadius * c;
-
-        return distance;
+        return earthRadius * c;
     }
 }
