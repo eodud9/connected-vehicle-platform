@@ -1,5 +1,7 @@
 package connected_vehicle.domain.vehicle;
 
+import connected_vehicle.domain.telemetry.TelemetryService;
+import connected_vehicle.domain.telemetry.dto.TelemetryStatusResponse;
 import connected_vehicle.domain.user.User;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateRequest;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateResponse;
@@ -19,6 +21,7 @@ import java.util.List;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final TelemetryService telemetryService;
 
     @PostMapping
     public ResponseEntity<VehicleCreateResponse> createVehicle(@Valid @RequestBody VehicleCreateRequest request){
@@ -35,5 +38,10 @@ public class VehicleController {
 
         return ResponseEntity.ok(vehicleService.getVehicle(user.getId(), user.getRole(), vehicleId));
 
+    }
+
+    @GetMapping("/{vehicleId}/status")
+    public ResponseEntity<TelemetryStatusResponse> getVehicleStatus(@PathVariable Long vehicleId, @AuthenticationPrincipal User user){
+        return ResponseEntity.ok(telemetryService.getLatestStatus(user.getId(), user.getRole(), vehicleId));
     }
 }

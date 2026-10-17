@@ -2,10 +2,14 @@ package connected_vehicle.domain.telemetry;
 
 import connected_vehicle.domain.drivingSession.DrivingSession;
 import connected_vehicle.domain.drivingSession.DrivingSessionRepository;
+import connected_vehicle.domain.ownership.OwnershipService;
 import connected_vehicle.domain.telemetry.dto.TelemetryCreateRequest;
+import connected_vehicle.domain.telemetry.dto.TelemetryStatusResponse;
+import connected_vehicle.domain.user.UserRole;
 import connected_vehicle.domain.vehicle.Vehicle;
 import connected_vehicle.domain.vehicle.VehicleService;
 import connected_vehicle.domain.vehicleEvent.VehicleEventService;
+import connected_vehicle.exception.TelemetryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +25,7 @@ public class TelemetryService {
     private final VehicleService vehicleService;
     private final DrivingSessionRepository drivingSessionRepository;
     private final VehicleEventService vehicleEventService;
+    private final OwnershipService ownershipService;
 
     @Transactional
     public void createTelemetry(Long vehicleId, String apiKey, TelemetryCreateRequest request){
@@ -113,6 +118,28 @@ public class TelemetryService {
             sessionToEnd.end(telemetry.getRecordedAt(), telemetry.getBatteryLevel(), totalDistance, averageSpeed);
 
         }
+
+    }
+
+    public TelemetryStatusResponse getLatestStatus(Long userId, UserRole role, Long vehicleId){
+
+        if (role != UserRole.ADMIN){
+            ownershipService.validateOwnership(userId, vehicleId);
+        }
+
+        Telemetry telemetry = telemetryRepository.findFirstByVehicle_IdOrderByRecordedAtDesc(vehicleId)
+                .orElseThrow( () -> new TelemetryNotFoundException("차량의 상태를 찾을 수 없습니다."));
+
+        return new TelemetryStatusResponse(
+                telemetry.getVehicle().getId(),
+                telemetry.getLatitude(),
+                telemetry.getLongitude(),
+                telemetry.getSpeed(),
+                telemetry.getBatteryLevel(),
+                telemetry.getTemperature(),
+                telemetry.isIgnitionStatus(),
+                telemetry.getRecordedAt()
+        );
 
     }
 

@@ -2,14 +2,12 @@ package connected_vehicle.domain.vehicle;
 
 import connected_vehicle.domain.ownership.OwnershipRepository;
 import connected_vehicle.domain.ownership.OwnershipService;
+import connected_vehicle.domain.telemetry.TelemetryRepository;
 import connected_vehicle.domain.user.UserRole;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateRequest;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateResponse;
 import connected_vehicle.domain.vehicle.dto.VehicleResponse;
-import connected_vehicle.exception.DuplicateLicensePlateException;
-import connected_vehicle.exception.DuplicateVinException;
-import connected_vehicle.exception.VehicleAuthenticationException;
-import connected_vehicle.exception.VehicleNotFoundException;
+import connected_vehicle.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -130,8 +128,6 @@ public class VehicleService {
                 .orElseThrow(() -> new VehicleNotFoundException("해당 차량을 찾을 수 없습니다."));
 
         String requestApiKeyHash = hashApiKey(apiKey);
-
-        System.out.println(requestApiKeyHash);
 
         boolean matches = MessageDigest.isEqual(
                 requestApiKeyHash.getBytes(StandardCharsets.UTF_8),

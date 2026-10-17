@@ -55,6 +55,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(TelemetryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleTelemetryNotFound(TelemetryNotFoundException e){
+        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "TELEMETRY_NOT_FOUND", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(DuplicateVinException.class)
     public ResponseEntity<ErrorResponse> handleVinDuplicate(DuplicateVinException e){
         ErrorResponse response = new ErrorResponse(HttpStatus.CONFLICT.value(), "DUPLICATE_VIN", e.getMessage());
