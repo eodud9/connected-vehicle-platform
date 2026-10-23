@@ -1,5 +1,7 @@
 package connected_vehicle.domain.vehicle;
 
+import connected_vehicle.domain.drivingSession.DrivingSessionService;
+import connected_vehicle.domain.drivingSession.dto.DrivingSessionResponse;
 import connected_vehicle.domain.telemetry.TelemetryService;
 import connected_vehicle.domain.telemetry.dto.TelemetryResponse;
 import connected_vehicle.domain.telemetry.dto.TelemetryStatusResponse;
@@ -25,6 +27,7 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
     private final TelemetryService telemetryService;
+    private final DrivingSessionService drivingSessionService;
 
     @PostMapping
     public ResponseEntity<VehicleCreateResponse> createVehicle(@Valid @RequestBody VehicleCreateRequest request){
@@ -55,6 +58,15 @@ public class VehicleController {
     ){
 
         return ResponseEntity.ok(telemetryService.getTelemetryHistory(user.getId(), user.getRole(), vehicleId, pageable));
+
+    }
+
+    @GetMapping("/{vehicleId}/driving-sessions")
+    public ResponseEntity<Page<DrivingSessionResponse>> getDrivingSessions(@PathVariable Long vehicleId,
+                                                                           @AuthenticationPrincipal User user,
+                                                                           Pageable pageable){
+
+        return ResponseEntity.ok(drivingSessionService.getDrivingSessions(user.getId(), user.getRole(), vehicleId, pageable));
 
     }
 }
