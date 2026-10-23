@@ -1,5 +1,7 @@
 package connected_vehicle.domain.telemetry;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -9,4 +11,5 @@ public interface TelemetryRepository extends JpaRepository<Telemetry, Long> {
 
     Optional<Telemetry> findFirstByVehicle_IdOrderByRecordedAtDesc(Long vehicleId);
     List<Telemetry> findAllByDrivingSession_IdOrderByRecordedAtAsc(Long drivingSessionId);
+    Page<Telemetry> findByVehicle_IdOrderByRecordedAtDesc(Long vehicleId, Pageable pageable);
 }

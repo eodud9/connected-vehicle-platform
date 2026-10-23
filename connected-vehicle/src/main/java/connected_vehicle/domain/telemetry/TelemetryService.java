@@ -4,6 +4,7 @@ import connected_vehicle.domain.drivingSession.DrivingSession;
 import connected_vehicle.domain.drivingSession.DrivingSessionRepository;
 import connected_vehicle.domain.ownership.OwnershipService;
 import connected_vehicle.domain.telemetry.dto.TelemetryCreateRequest;
+import connected_vehicle.domain.telemetry.dto.TelemetryResponse;
 import connected_vehicle.domain.telemetry.dto.TelemetryStatusResponse;
 import connected_vehicle.domain.user.UserRole;
 import connected_vehicle.domain.vehicle.Vehicle;
@@ -11,6 +12,8 @@ import connected_vehicle.domain.vehicle.VehicleService;
 import connected_vehicle.domain.vehicleEvent.VehicleEventService;
 import connected_vehicle.exception.TelemetryNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,6 +144,30 @@ public class TelemetryService {
                 telemetry.getRecordedAt()
         );
 
+    }
+
+    public Page<TelemetryResponse> getTelemetryHistory(Long userId, UserRole role, Long vehicleId, Pageable pageable
+    ){
+        if(role != UserRole.ADMIN){
+            ownershipService.validateOwnership(userId, vehicleId);
+        }
+
+        Page<Telemetry> telemetryPage = telemetryRepository.findByVehicle_IdOrderByRecordedAtDesc(vehicleId, pageable);
+
+        Page<TelemetryResponse> telemetryResponses = telemetryPage.map(telemetry ->
+                new TelemetryResponse(
+                        telemetry.getId(),
+                        telemetry.getDrivingSession() == null ? null : telemetry.getDrivingSession().getId(),
+                        telemetry.getLatitude(),
+                        telemetry.getLongitude(),
+                        telemetry.getSpeed(),
+                        telemetry.getBatteryLevel(),
+                        telemetry.getTemperature(),
+                        telemetry.isIgnitionStatus(),
+                        telemetry.getRecordedAt()
+                ));
+
+        return telemetryResponses;
     }
 
     public double calculateDistance(Telemetry prev, Telemetry current){

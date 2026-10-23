@@ -1,6 +1,7 @@
 package connected_vehicle.domain.vehicle;
 
 import connected_vehicle.domain.telemetry.TelemetryService;
+import connected_vehicle.domain.telemetry.dto.TelemetryResponse;
 import connected_vehicle.domain.telemetry.dto.TelemetryStatusResponse;
 import connected_vehicle.domain.user.User;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateRequest;
@@ -8,6 +9,8 @@ import connected_vehicle.domain.vehicle.dto.VehicleCreateResponse;
 import connected_vehicle.domain.vehicle.dto.VehicleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,5 +46,15 @@ public class VehicleController {
     @GetMapping("/{vehicleId}/status")
     public ResponseEntity<TelemetryStatusResponse> getVehicleStatus(@PathVariable Long vehicleId, @AuthenticationPrincipal User user){
         return ResponseEntity.ok(telemetryService.getLatestStatus(user.getId(), user.getRole(), vehicleId));
+    }
+
+    @GetMapping("/{vehicleId}/telemetry")
+    public ResponseEntity<Page<TelemetryResponse>> getTelemetries(@PathVariable Long vehicleId,
+                                                                  @AuthenticationPrincipal User user,
+                                                                  Pageable pageable
+    ){
+
+        return ResponseEntity.ok(telemetryService.getTelemetryHistory(user.getId(), user.getRole(), vehicleId, pageable));
+
     }
 }
