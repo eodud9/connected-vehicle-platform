@@ -3,6 +3,7 @@ package connected_vehicle.domain.drivingSession;
 import connected_vehicle.domain.drivingSession.dto.DrivingSessionResponse;
 import connected_vehicle.domain.ownership.OwnershipService;
 import connected_vehicle.domain.user.UserRole;
+import connected_vehicle.exception.DrivingSessionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,5 +37,27 @@ public class DrivingSessionService {
                 ));
 
         return drivingSessionResponses;
+    }
+
+    public DrivingSessionResponse getDrivingSession(Long userId, UserRole role, Long sessionId){
+
+        DrivingSession session = drivingSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new DrivingSessionNotFoundException("요청하신 세션을 찾을 수 없습니다."));
+
+        if(role != UserRole.ADMIN){
+            ownershipService.validateOwnership(userId, session.getVehicle().getId());
+        }
+
+        DrivingSessionResponse response = new DrivingSessionResponse(
+                session.getId(),
+                session.getStartedAt(),
+                session.getEndedAt(),
+                session.getTotalDistance(),
+                session.getAverageSpeed(),
+                session.getStartBatteryLevel(),
+                session.getEndBatteryLevel()
+                );
+
+        return response;
     }
 }
