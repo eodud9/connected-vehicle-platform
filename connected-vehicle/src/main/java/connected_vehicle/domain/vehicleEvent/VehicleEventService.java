@@ -1,7 +1,12 @@
 package connected_vehicle.domain.vehicleEvent;
 
+import connected_vehicle.domain.ownership.OwnershipService;
 import connected_vehicle.domain.telemetry.Telemetry;
+import connected_vehicle.domain.user.UserRole;
+import connected_vehicle.domain.vehicleEvent.dto.VehicleEventResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -11,6 +16,7 @@ import java.time.Duration;
 public class VehicleEventService {
 
     private final VehicleEventRepository vehicleEventRepository;
+    private final OwnershipService ownershipService;
 
     private static final double LOW_BATTERY_THRESHOLD = 20.0;
     private static final double HIGH_TEMPERATURE_THRESHOLD = 45.0;
@@ -75,6 +81,22 @@ public class VehicleEventService {
         double acceleration = calculateAcceleration(prevTelemetry, currentTelemetry);
 
         return acceleration <= RAPID_DECELERATION_THRESHOLD;
+    }
+
+    public Page<VehicleEventResponse> getVehicleEvents(Long userId, UserRole role, Long vehicleId, Pageable pageable){
+        if(role != UserRole.ADMIN){
+            ownershipService.validateOwnership(userId, vehicleId);
+        }
+
+        Page<VehicleEvent> vehicleEventPage = vehicleEventRepository.findByVehicle_IdOrderByOccurredAtDesc(vehicleId, pageable);
+
+        return vehicleEventPage.map(vehicleEvent -> new VehicleEventResponse(
+                vehicleEvent.getId(),
+                vehicleEvent.getDrivingSession() == null ? null : vehicleEvent.getDrivingSession().getId(),
+                vehicleEvent.getEventType(),
+                vehicleEvent.getDescription(),
+                vehicleEvent.getOccurredAt()
+                ));
     }
 
     private double calculateAcceleration(Telemetry prevTelemetry, Telemetry currentTelemetry){

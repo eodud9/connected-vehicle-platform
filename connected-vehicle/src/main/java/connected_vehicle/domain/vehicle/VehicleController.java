@@ -6,9 +6,12 @@ import connected_vehicle.domain.telemetry.TelemetryService;
 import connected_vehicle.domain.telemetry.dto.TelemetryResponse;
 import connected_vehicle.domain.telemetry.dto.TelemetryStatusResponse;
 import connected_vehicle.domain.user.User;
+import connected_vehicle.domain.user.UserRole;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateRequest;
 import connected_vehicle.domain.vehicle.dto.VehicleCreateResponse;
 import connected_vehicle.domain.vehicle.dto.VehicleResponse;
+import connected_vehicle.domain.vehicleEvent.VehicleEventService;
+import connected_vehicle.domain.vehicleEvent.dto.VehicleEventResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +31,7 @@ public class VehicleController {
     private final VehicleService vehicleService;
     private final TelemetryService telemetryService;
     private final DrivingSessionService drivingSessionService;
+    private final VehicleEventService vehicleEventService;
 
     @PostMapping
     public ResponseEntity<VehicleCreateResponse> createVehicle(@Valid @RequestBody VehicleCreateRequest request){
@@ -65,8 +69,13 @@ public class VehicleController {
     public ResponseEntity<Page<DrivingSessionResponse>> getDrivingSessions(@PathVariable Long vehicleId,
                                                                            @AuthenticationPrincipal User user,
                                                                            Pageable pageable){
-
         return ResponseEntity.ok(drivingSessionService.getDrivingSessions(user.getId(), user.getRole(), vehicleId, pageable));
+    }
 
+    @GetMapping("/{vehicleId}/events")
+    public ResponseEntity<Page<VehicleEventResponse>> getVehicleEvents(@PathVariable Long vehicleId,
+                                                                       @AuthenticationPrincipal User user,
+                                                                       Pageable pageable){
+        return ResponseEntity.ok(vehicleEventService.getVehicleEvents(user.getId(), user.getRole(), vehicleId, pageable));
     }
 }
