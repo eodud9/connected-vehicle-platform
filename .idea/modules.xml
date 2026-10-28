@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/Connected-vehicle-platform.iml" filepath="$PROJECT_DIR$/.idea/Connected-vehicle-platform.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/connected-vehicle.main.iml" filepath="$PROJECT_DIR$/.idea/modules/connected-vehicle.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/connected-vehicle.test.iml" filepath="$PROJECT_DIR$/.idea/modules/connected-vehicle.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/vehicle-simulator.main.iml" filepath="$PROJECT_DIR$/.idea/modules/vehicle-simulator.main.iml" />
     </modules>
   </component>
 </project>
