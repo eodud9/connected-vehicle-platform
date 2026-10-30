@@ -1,6 +1,7 @@
 package simulator;
 
 import java.net.http.HttpClient;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,10 +36,14 @@ public class SimulatorApplication {
                 0
         );
 
+        List<SimulatedVehicle> vehicles = List.of(new SimulatedVehicle(vehicleId, apiKey, state));
+
         scheduler.scheduleAtFixedRate(
                 () -> {
-                    state.update();
-                    sender.send(vehicleId, apiKey, state);
+                    for (SimulatedVehicle vehicle : vehicles) {
+                        vehicle.getState().update();
+                        sender.send(vehicle.getVehicleId(), vehicle.getApiKey(), vehicle.getState());
+                    }
                 },
                 0,
                 1,
